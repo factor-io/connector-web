@@ -6,7 +6,7 @@ Factor::Connector.service 'web' do
     start do |data|
       info 'starting webhook'
       hook_id = data['id'] || 'post'
-      hook_url = web_hook id: hook_id do
+      dynamic_hook_url = web_hook id: hook_id do
         start do |_listener_start_params, hook_data, _req, _res|
           info 'Got a Web Hook POST call'
           post_data = hook_data.dup
@@ -18,7 +18,9 @@ Factor::Connector.service 'web' do
           start_workflow response: post_data
         end
       end
-      info "Webhook started at: #{hook_url}"
+      static_hook_url = "/v0.4/hooks/#{hook_id}"
+      info "Webhook started at: #{dynamic_hook_url}"
+      info "Webhook started at: #{static_hook_url}"
     end
     stop do |_data|
       info 'Stopping...'
