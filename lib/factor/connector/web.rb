@@ -33,26 +33,49 @@ Factor::Connector.service 'web' do
     url       = params['url']
 
     fail 'URL is required' unless url
+    fail 'Headers (headers) must be a Hash' unless headers.is_a?(Hash)
 
-    begin
-      contents = JSON.parse(contents) if contents.is_a?(String)
-    rescue
-      fail "Couldn't parse '#{contents}' as JSON"
-    end
+    header_keys_valid = headers.keys.all?{|k| k.is_a?(String) || k.is_a?(Symbol)}
+    header_vals_valid = headers.values.all?{|k| k.is_a?(String) || k.is_a?(Symbol)}
 
+    fail 'Headers (headers) must be a Hash of keys/values of strings' unless header_vals_valid && header_keys_valid
+    fail 'Params (params) must be a hash' unless params.is_a?(Hash)
+    
+    info "Posting to `#{url}`"
     begin
-      headers = JSON.parse(headers) if headers.is_a?(String)
+      response = RestClient.post(url, contents, headers)
+      action_callback response: response
     rescue
-      fail 'Couldnt parse header'
+      fail "Couldn't call '#{url}'"
     end
-    if contents
-      info "Posting to `#{url}`"
-      begin
-        response = RestClient.post(url, contents, headers)
-        action_callback response
-      rescue
-        fail "Couldn't call '#{url}'"
-      end
+  end
+
+  action 'get' do |params|
+    query     = params['params'] || {}
+    headers   = params['headers'] || {}
+    url       = params['url']
+
+    fail 'URL is required' unless url
+    fail 'Headers (headers) must be a Hash' unless headers.is_a?(Hash)
+
+    header_keys_valid = headers.keys.all?{|k| k.is_a?(String) || k.is_a?(Symbol)}
+    header_vals_valid = headers.values.all?{|k| k.is_a?(String) || k.is_a?(Symbol)}
+
+    fail 'Headers (headers) must be a Hash of keys/values of strings' unless header_vals_valid && header_keys_valid
+    fail 'Params (params) must be a hash' unless params.is_a?(Hash)
+
+    query_keys_valid = query.keys.all?{|k| k.is_a?(String) || k.is_a?(Symbol)}
+    query_vals_valid = query.values.all?{|k| k.is_a?(String) || k.is_a?(Symbol)}
+    fail 'Params (params) must be a Hash of keys/values of strings' unless query_keys_valid && query_vals_valid
+    
+    contents = headers.merge(params:query)
+
+    info "Posting to `#{url}`"
+    begin
+      response = RestClient.get(url, contents)
+      action_callback response: response
+    rescue
+      fail "Couldn't call '#{url}'"
     end
   end
 end
