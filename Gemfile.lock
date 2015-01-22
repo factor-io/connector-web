@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     factor-connector-web (0.0.4)
-      factor-connector-api (~> 0.0.3)
+      factor-connector-api (~> 0.0.14)
       rest-client (~> 1.7.2)
 
 GEM
@@ -10,11 +10,11 @@ GEM
   specs:
     celluloid (0.16.0)
       timers (~> 4.0.0)
-    factor-connector-api (0.0.13)
+    factor-connector-api (0.0.14)
       celluloid (~> 0.16.0)
     hitimes (1.2.2)
     mime-types (2.4.3)
-    netrc (0.8.0)
+    netrc (0.10.2)
     rest-client (1.7.2)
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
