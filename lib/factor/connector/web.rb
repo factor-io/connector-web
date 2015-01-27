@@ -15,7 +15,7 @@ Factor::Connector.service 'web' do
           post_data.delete('instance_id')
           post_data.delete('hook_id')
           post_data.delete('user_id')
-          start_workflow response: post_data
+          start_workflow post_data
         end
       end
       static_hook_url = "/v0.4/hooks/#{hook_id}"
