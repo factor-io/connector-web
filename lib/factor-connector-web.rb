@@ -1,8 +1,9 @@
-require 'factor-connector-api'
+require 'factor/connector/definition'
 require 'restclient'
 
-Factor::Connector.service 'web' do
-  listener 'hook' do
+class WebConnectorDefinition < Factor::Connector::Definition
+  id :web
+  listener :hook do
     start do |data|
       info 'starting webhook'
       hook_id = data['id'] || 'post'
@@ -15,7 +16,7 @@ Factor::Connector.service 'web' do
           post_data.delete('instance_id')
           post_data.delete('hook_id')
           post_data.delete('user_id')
-          start_workflow post_data
+          trigger post_data
         end
       end
       static_hook_url = "/v0.4/hooks/#{hook_id}"
@@ -27,7 +28,7 @@ Factor::Connector.service 'web' do
     end
   end
 
-  action 'post' do |params|
+  action :post do |params|
     contents  = params['params'] || {}
     headers   = params['headers'] || {}
     url       = params['url']
@@ -44,13 +45,13 @@ Factor::Connector.service 'web' do
     info "Posting to `#{url}`"
     begin
       response = RestClient.post(url, contents, headers)
-      action_callback response: response
+      respond response: response
     rescue
       fail "Couldn't call '#{url}'"
     end
   end
 
-  action 'get' do |params|
+  action :get do |params|
     query     = params['params'] || {}
     headers   = params['headers'] || {}
     url       = params['url']
@@ -73,7 +74,7 @@ Factor::Connector.service 'web' do
     info "Posting to `#{url}`"
     begin
       response = RestClient.get(url, contents)
-      action_callback response: response
+      respond response: response
     rescue
       fail "Couldn't call '#{url}'"
     end

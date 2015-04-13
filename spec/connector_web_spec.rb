@@ -1,7 +1,12 @@
 require 'spec_helper'
 
-describe 'web' do
-  it ':: deploy' do
-    expect(true).to be(true)
+describe WebConnectorDefinition do
+  it 'can list for a hook' do
+  end
+
+  it 'can post' do
+  end
+
+  it 'can get' do
   end
 end
