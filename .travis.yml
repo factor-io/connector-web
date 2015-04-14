@@ -6,6 +6,7 @@ rvm:
   - 2.1.5
   - 2.2.0
   - 2.2.1
+  - 2.2.2
 env:
   matrix:
     secure: iK4b0iIdLDwwj5qA4A1gpleCs/DYeOxfSdRu+RYVvTnxIrwGVBiy5RBqVYT+/t9d+tEfLFFHRPZQzGQQiS7cYr0Wow5+eDhl5r41rYZvVPoKpVACeK+l8hHInvVtqLGDewkrOmxD19OzOuE3jfqkhNk/T7I8ACw1Qr7hG8l4R4g=
