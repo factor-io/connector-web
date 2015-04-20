@@ -42,18 +42,14 @@ class WebConnectorDefinition < Factor::Connector::Definition
   end
 
   action :post do |params|
-    contents  = params[:params] || {}
-    headers   = params[:headers] || {}
-    url       = params[:url]
-
-    fail 'URL is required' unless url
-    fail 'Headers (headers) must be a Hash' unless headers.is_a?(Hash)
+    contents  = params.varify(:params,default:{}, is_a:Hash)
+    headers   = params.varify(:headers, default:{}, is_a:Hash)
+    url       = params.varify(:url, required:true)
 
     header_keys_valid = headers.keys.all?{|k| k.is_a?(String) || k.is_a?(Symbol)}
     header_vals_valid = headers.values.all?{|k| k.is_a?(String) || k.is_a?(Symbol)}
 
     fail 'Headers (headers) must be a Hash of keys/values of strings' unless header_vals_valid && header_keys_valid
-    fail 'Params (params) must be a hash' unless params.is_a?(Hash)
     
     info "Posting to `#{url}`"
     begin
@@ -65,18 +61,14 @@ class WebConnectorDefinition < Factor::Connector::Definition
   end
 
   action :get do |params|
-    query     = params[:params] || {}
-    headers   = params[:headers] || {}
-    url       = params[:url]
-
-    fail 'URL is required' unless url
-    fail 'Headers (headers) must be a Hash' unless headers.is_a?(Hash)
+    query     = params.varify(:params, default:{}, is_a:Hash)
+    headers   = params.varify(:headers, default:{}, is_a:Hash)
+    url       = params.varify(:url, required:true)
 
     header_keys_valid = headers.keys.all?{|k| k.is_a?(String) || k.is_a?(Symbol)}
     header_vals_valid = headers.values.all?{|k| k.is_a?(String) || k.is_a?(Symbol)}
 
     fail 'Headers (headers) must be a Hash of keys/values of strings' unless header_vals_valid && header_keys_valid
-    fail 'Params (params) must be a Hash' unless params.is_a?(Hash)
 
     query_keys_valid = query.keys.all?{|k| k.is_a?(String) || k.is_a?(Symbol)}
     query_vals_valid = query.values.all?{|k| k.is_a?(String) || k.is_a?(Symbol)}
