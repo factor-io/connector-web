@@ -23,8 +23,7 @@ describe :web do
     it 'can receive a web hook' do
       t = Thread.new {@hook.run}
 
-      expect(@logger).to receive(:trigger) do |type, data|
-        expect(data.keys).to include(:configured)
+      expect(@logger).to receive(:trigger).with(:trigger, hash_including(configured: anything())) do |type, data|
 
         Thread.new do
           sleep 1
@@ -32,7 +31,7 @@ describe :web do
         end
       end
 
-      expect(@logger).to receive(:trigger) do |type, data|
+      expect(@logger).to receive(:trigger).with(:trigger, anything()) do |type, data|
         expect(data.keys).to include(:accept)
         t.kill
       end
