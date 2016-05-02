@@ -9,5 +9,5 @@ rvm:
   - 2.2.2
 before_install:
   - wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
-  - unzip ./ngrok.zip
-  - set PATH=%PATH%;$(pwd)/ngrok/ngrok
+  - unzip ./ngrok-stable-linux-amd64.zip
+  - set PATH=%PATH%;$(pwd)/ngrok
