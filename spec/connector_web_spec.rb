@@ -32,7 +32,14 @@ describe :web do
       end
 
       expect(@logger).to receive(:trigger).with(:trigger, anything()) do |type, data|
-        expect(data.keys).to include(:accept)
+        expected_keys = [
+          :accept, :body, :params, :scheme, :script_name, :path_info, :port,
+          :request_method, :query_string, :content_length, :media_type, :host,
+          :form_data?, :referrer, :user_agent, :cookies, :xhr?, :url, :path,
+          :ip, :secure?, :forwarded?]
+        expected_keys.each do |key|
+          expect(data.keys).to include(key)
+        end
         t.kill
       end
       
