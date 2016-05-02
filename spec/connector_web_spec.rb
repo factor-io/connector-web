@@ -9,7 +9,7 @@ describe :web do
       @hook.add_observer(@logger, :trigger)
     end
 
-    it 'can listen' do
+    it 'can be initialized' do
       t = Thread.new {@hook.run}
 
       expect(@logger).to receive(:trigger) do |type, data|
