@@ -17,6 +17,10 @@ module Web
       listener.start
     end
 
+    def debug?
+      true
+    end
+
     def debug(message)
       super(message)
     end
