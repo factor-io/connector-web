@@ -8,13 +8,33 @@ module Web
     end
 
     def run
-      listener = Ngrok::Listener.new(logger: @logger)
+      listener = Ngrok::Listener.new(logger: self)
 
       listener.add_listener do |content|
         trigger content
       end
 
       listener.start
+    end
+
+    def debug(message)
+      super(message)
+    end
+
+    def info(message)
+      super(message)
+    end
+
+    def warn(message)
+      super(message)
+    end
+
+    def success(message)
+      super(message)
+    end
+
+    def error(message)
+      super(message)
     end
   end
 
