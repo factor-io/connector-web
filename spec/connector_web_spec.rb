@@ -1,50 +1,77 @@
 require 'spec_helper'
 require 'rest-client'
 
-describe WebConnectorDefinition do
-  describe 'Hook' do
-    it 'can listen for a hook' do
-      @runtime = Factor::Connector::Runtime.new(WebConnectorDefinition)
-      id = "test_#{SecureRandom.hex(4)}"
-      @runtime.start_listener([:hook], id:id)
-      expect(@runtime).to message info:"Registering web hook '#{id}'"
-      expect(@runtime).to message info:'Web hook now open'
-      expect(@runtime).to message info:"Listening on 'http://web.sockethook.io/hook/#{id}'"
-
-      @runtime.stop_listener
+describe :web do
+  describe :hook do
+    before :each do
+      @logger = double("logger", trigger:'hi')
+      @hook = Web::Hook.new()
+      @hook.add_observer(@logger, :trigger)
     end
 
-    it 'can trigger for a hook' do
-      @runtime = Factor::Connector::Runtime.new(WebConnectorDefinition)
-      id = "test_#{SecureRandom.hex(4)}"
-      url = "http://web.sockethook.io/hook/#{id}"
-      @runtime.start_listener([:hook], id:id)
-      expect(@runtime).to message info:"Listening on '#{url}'"
+    it 'can listen' do
+      t = Thread.new {@hook.run}
 
-      RestClient.post(url,{this_is_a:'test'})
-
-      expect(@runtime).to trigger this_is_a:'test'
-
-      @runtime.stop_listener
+      expect(@logger).to receive(:trigger) do |type, data|
+        expect(data.keys).to include(:configured)
+        t.kill
+      end
+      
+      t.join
     end
-  end
 
-  describe 'GET' do
-    it 'can get data' do
-      @runtime = Factor::Connector::Runtime.new(WebConnectorDefinition)
-      @runtime.run([:get], url:'http://google.com')
+    it 'can receive a web hook' do
+      t = Thread.new {@hook.run}
 
-      expect(@runtime).to respond
-    end
-  end
+      expect(@logger).to receive(:trigger) do |type, data|
+        expect(data.keys).to include(:configured)
 
-  describe 'POST' do
-    it 'can get data' do
-      @runtime = Factor::Connector::Runtime.new(WebConnectorDefinition)
-      @runtime.run([:post], url:'https://mkqi0d7951ax.runscope.net', params:{q:'test'})
+        Thread.new do
+          sleep 1
+          RestClient.post(data[:configured][:url], {foo:'bar'})
+        end
+      end
 
-      expect(@runtime).to respond
+      expect(@logger).to receive(:trigger) do |type, data|
+        expect(data.keys).to include(:accept)
+        t.kill
+      end
+      
+      t.join
     end
   end
 
+  describe :post do
+    before :all do
+      @host = 'www.example.com'
+      @stub = stub_request(:post, @host).to_return(:body => 'ok', status: 200)
+    end
+
+    it 'can POST data' do
+      response = Web::Post.new(url: @host).run
+      expect(response[:code]).to eq 200
+      expect(response[:body]).to eq 'ok'
+    end
+  end
+
+  describe :get do
+    before :each do
+      @host = 'www.example.com'
+      @stub = stub_request(:get, @host).to_return(:body => 'ok', status: 200)
+    end
+
+    it 'can GET data' do
+      response = Web::Get.new(url: @host).run
+      expect(response[:code]).to eq 200
+      expect(response[:body]).to eq 'ok'
+    end
+
+    describe :execute do
+      it 'can GET by execute method' do
+        response = Web::Execute.new(method: :get, url: @host).run
+        expect(response[:code]).to eq 200
+        expect(response[:body]).to eq 'ok'
+      end
+    end
+  end
 end

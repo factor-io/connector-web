@@ -1,87 +1,70 @@
-require 'factor/connector/definition'
-require 'factor/connector/runtime'
-require 'factor/connector/test'
-require 'restclient'
-require 'websockethook'
+require 'factor/connector'
+require File.dirname(__FILE__) + '/listener.rb'
 
-class WebConnectorDefinition < Factor::Connector::Definition
-  id :web
-  listener :hook do
-    hook = WebSocketHook.new
-    
-    start do |data|
+module Web
+  class Hook < Factor::Connector
+    def initialize(options={})
+
+    end
+
+    def run
+      listener = Ngrok::Listener.new(logger: @logger)
+
+      listener.add_listener do |content|
+        trigger content
+      end
+
+      listener.start
+    end
+  end
+
+  class Execute < Factor::Connector
+    def initialize(options)
+      @options = options
+    end
+
+    def run
+      request = {
+        url:    @options[:url],
+        method: @options[:method],
+      }
       
-      if data[:id]
-        info "Registering web hook '#{data[:id]}'"
-        hook.register data[:id]
-      end
-      hook.listen do |post|
-        case post[:type]
-        when 'registered'
-          info "Listening on '#{post[:data][:url]}'"
-        when 'hook'
-          info "Received a web hook on '#{data[:id]}'"
-          trigger post[:data]
-        when 'close'
-          warn 'Hook closed, will restart'
-        when 'error'
-          error "Error with web hook: #{post[:message]}"
-        when 'open'
-          info "Web hook now open"
-        when 'restart'
-          warn "Restarting web hook"
-        else
-          warn "Unknown state of web hook: #{post[:type]}"
-        end
-      end
-    end
+      request[:headers] = @options[:headers] if @options[:headers]
 
-    stop do
-      hook.stop
+      begin
+        response = RestClient::Request.execute request
+      rescue RestClient::ExceptionWithResponse => ex
+        response = ex.response
+      end
+      
+      {
+        code:        response.code,
+        body:        response.body,
+        headers:     response.headers,
+        raw_headers: response.raw_headers,
+        cookies:     response.cookies,
+        cookie_jar:  response.cookie_jar,
+        request:     response.request,
+        description: response.description,
+      }
     end
   end
 
-  action :post do |params|
-    contents  = params.varify(:params,default:{}, is_a:Hash)
-    headers   = params.varify(:headers, default:{}, is_a:Hash)
-    url       = params.varify(:url, required:true)
-
-    header_keys_valid = headers.keys.all?{|k| k.is_a?(String) || k.is_a?(Symbol)}
-    header_vals_valid = headers.values.all?{|k| k.is_a?(String) || k.is_a?(Symbol)}
-
-    fail 'Headers (headers) must be a Hash of keys/values of strings' unless header_vals_valid && header_keys_valid
-    
-    info "Posting to `#{url}`"
-    begin
-      response = RestClient.post(url, contents, headers)
-      respond response: response
-    rescue
-      fail "Couldn't call '#{url}'"
+  class Post < Execute
+    def initialize(options)
+      super(options.merge(method: :post))
     end
   end
 
-  action :get do |params|
-    query     = params.varify(:params, default:{}, is_a:Hash)
-    headers   = params.varify(:headers, default:{}, is_a:Hash)
-    url       = params.varify(:url, required:true)
-
-    header_keys_valid = headers.keys.all?{|k| k.is_a?(String) || k.is_a?(Symbol)}
-    header_vals_valid = headers.values.all?{|k| k.is_a?(String) || k.is_a?(Symbol)}
-
-    fail 'Headers (headers) must be a Hash of keys/values of strings' unless header_vals_valid && header_keys_valid
-
-    query_keys_valid = query.keys.all?{|k| k.is_a?(String) || k.is_a?(Symbol)}
-    query_vals_valid = query.values.all?{|k| k.is_a?(String) || k.is_a?(Symbol)}
-    fail 'Params (params) must be a Hash of keys/values of strings' unless query_keys_valid && query_vals_valid
-    
-    contents = headers.merge(params:query)
-
-    info "Posting to `#{url}`"
-    begin
-      response = RestClient.get(url, contents)
-      respond response:response
-    rescue
-      fail "Couldn't call '#{url}'"
+  class Get < Execute
+    def initialize(options)
+      super(options.merge(method: :get))
     end
   end
 end
+
+
+Factor::Connector.register(Web::Hook)
+Factor::Connector.register(Web::Execute)
+Factor::Connector.register(Web::Post)
+Factor::Connector.register(Web::Get)

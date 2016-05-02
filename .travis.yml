@@ -7,14 +7,7 @@ rvm:
   - 2.2.0
   - 2.2.1
   - 2.2.2
-env:
-  matrix:
-    secure: iK4b0iIdLDwwj5qA4A1gpleCs/DYeOxfSdRu+RYVvTnxIrwGVBiy5RBqVYT+/t9d+tEfLFFHRPZQzGQQiS7cYr0Wow5+eDhl5r41rYZvVPoKpVACeK+l8hHInvVtqLGDewkrOmxD19OzOuE3jfqkhNk/T7I8ACw1Qr7hG8l4R4g=
-deploy:
-  provider: rubygems
-  gem: factor-connector-web
-  api_key:
-    secure: eqUKqAmRw1N7pxHifyMIMecK7llXIAd8owX6MQ8CKJrqmg/1r9vo1XbOc5K9nmqSGBtrDNPWt73LFBpKICBKgiKHC+0D/Yuf1uRtVtgOx3dycy3Kbx+YXiTNgBHGIOtcaC05KOpm6EaC2qmwE6Cgd4fmFVZO3GjWe/aMeDUpzGg=
-  on:
-    tags: true
-    all_branches: true
+before_install:
+  - wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+  - unzip ./ngrok.zip
+  - set PATH=%PATH%;$(pwd)/ngrok/ngrok
