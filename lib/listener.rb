@@ -4,11 +4,12 @@ require 'ngrok/tunnel'
 
 module Ngrok
   class Listener
-    attr_accessor :port, :url, :insecure_url
+    attr_accessor :port, :url, :insecure_url, :response
 
     def initialize(options)
       @listeners = []
-      @logger = options[:logger]
+      @logger    = options[:logger]
+      @response  = options[:response] || Proc.new{ 'ok' }
     end
 
     def start
@@ -58,6 +59,7 @@ module Ngrok
             params:         params,
           }
           settings.parent.notify(content)
+          settings.parent.response.call
         end
       end
       Rack::Handler::WEBrick.run listener_app, Port: @port, Logger: @logger
