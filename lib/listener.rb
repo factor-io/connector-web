@@ -32,6 +32,10 @@ module Ngrok
       Rack::Handler::WEBrick.run listener_app, Port: @port, Logger: @logger
     end
 
+    def stop
+      Rack::Handler::WEBrick.shutdown
+    end
+
     def notify(data={})
       @listeners.each do |listener|
         listener.call(data)
