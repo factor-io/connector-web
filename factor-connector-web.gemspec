@@ -14,9 +14,7 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
 
   s.add_runtime_dependency 'rest-client', '~> 1.8.0'
-  s.add_runtime_dependency 'ngrok-tunnel', '~> 2.1.0'
-  s.add_runtime_dependency 'sinatra', '~> 1.4.7'
-  s.add_runtime_dependency 'sinatra-contrib', '~> 1.4.7'
+  s.add_runtime_dependency 'websockethook', '~> 0.2.02'
 
   s.add_development_dependency 'codeclimate-test-reporter', '~> 0.5.2'
   s.add_development_dependency 'rspec', '~> 3.4.0'

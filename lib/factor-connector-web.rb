@@ -1,44 +1,24 @@
 require 'factor/connector'
-require File.dirname(__FILE__) + '/listener.rb'
+require 'websockethook'
 
 module Web
   class Hook < Factor::Connector
     def initialize(options={})
-
+      @id = options[:id]
     end
 
     def run
-      listener = Ngrok::Listener.new(logger: self)
+      listener = WebSocketHook.new
 
-      listener.add_listener do |content|
-        trigger content
+      listener.listen @id do |type, content|
+        case type
+        when :hook
+          trigger content
+        else
+          info type
+        end
+
       end
-
-      listener.start
-    end
-
-    def debug?
-      true
-    end
-
-    def debug(message)
-      super(message)
-    end
-
-    def info(message)
-      super(message)
-    end
-
-    def warn(message)
-      super(message)
-    end
-
-    def success(message)
-      super(message)
-    end
-
-    def error(message)
-      super(message)
     end
   end
 
