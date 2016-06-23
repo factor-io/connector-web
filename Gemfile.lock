@@ -1,10 +1,10 @@
 GIT
   remote: https://github.com/factor-io/factor.git
-  revision: 865be7af70502d6b57f31f0f57dde416b06e4839
+  revision: 6118ab4b76e0a8fe8a2ceab1369a2403e7380695
   specs:
     factor (3.0.0)
       commander (~> 4.4.0)
-      concurrent-ruby (~> 1.0.1)
+      concurrent-ruby (~> 1.0.2)
       configatron (~> 4.5.0)
       rainbow (~> 2.1.0)
 
@@ -22,25 +22,25 @@ GEM
   specs:
     addressable (2.4.0)
     backports (3.6.8)
-    codeclimate-test-reporter (0.5.0)
+    codeclimate-test-reporter (0.5.2)
       simplecov (>= 0.7.1, < 1.0.0)
     commander (4.4.0)
       highline (~> 1.7.2)
-    concurrent-ruby (1.0.1)
+    concurrent-ruby (1.0.2)
     configatron (4.5.0)
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
     diff-lcs (1.2.5)
     docile (1.1.5)
-    domain_name (0.5.20160310)
+    domain_name (0.5.20160615)
       unf (>= 0.0.5, < 1.0.0)
     hashdiff (0.3.0)
     highline (1.7.8)
     http-cookie (1.0.2)
       domain_name (~> 0.5)
     json (1.8.3)
-    mime-types (2.99.1)
-    multi_json (1.11.3)
+    mime-types (2.99.2)
+    multi_json (1.12.1)
     netrc (0.11.0)
     ngrok-tunnel (2.1.0)
     rack (1.6.4)
@@ -49,7 +49,7 @@ GEM
     rack-test (0.6.3)
       rack (>= 1.0)
     rainbow (2.1.0)
-    rake (11.1.2)
+    rake (11.2.2)
     rest-client (1.8.0)
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 3.0)
@@ -86,11 +86,11 @@ GEM
       rack-test
       sinatra (~> 1.4.0)
       tilt (>= 1.3, < 3)
-    tilt (2.0.2)
+    tilt (2.0.5)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.2)
-    webmock (2.0.0)
+    webmock (2.1.0)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff
@@ -99,13 +99,13 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  codeclimate-test-reporter (~> 0.5.0)
+  codeclimate-test-reporter (~> 0.5.2)
   factor!
   factor-connector-web!
-  rake (~> 11.1.2)
+  rake (~> 11.2.2)
   rspec (~> 3.4.0)
   rspec-wait (~> 0.0.8)
-  webmock (~> 2.0.0)
+  webmock (~> 2.1.0)
 
 BUNDLED WITH
    1.11.2

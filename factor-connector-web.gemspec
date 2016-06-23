@@ -18,9 +18,9 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'sinatra', '~> 1.4.7'
   s.add_runtime_dependency 'sinatra-contrib', '~> 1.4.7'
 
-  s.add_development_dependency 'codeclimate-test-reporter', '~> 0.5.0'
+  s.add_development_dependency 'codeclimate-test-reporter', '~> 0.5.2'
   s.add_development_dependency 'rspec', '~> 3.4.0'
-  s.add_development_dependency 'rake', '~> 11.1.2'
-  s.add_development_dependency 'webmock', '~> 2.0.0'
+  s.add_development_dependency 'rake', '~> 11.2.2'
+  s.add_development_dependency 'webmock', '~> 2.1.0'
   s.add_development_dependency 'rspec-wait', '~> 0.0.8'
 end
